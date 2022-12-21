@@ -1,6 +1,8 @@
 import numpy as math
+import imageio
 from scipy.integrate import odeint
 import matplotlib.pyplot as plt
+
 
 # work in standard units of meters, seconds, and radians
 
@@ -24,9 +26,9 @@ def derivative(y, t, l, m):
 theta_naught, omega_naught = 60, 0
 
 # create an array of times for the process, followed by initial conditions
-intervals = 100
-t = math.linspace(0, 10, intervals)
-y_naught = math.array([theta_naught*math.pi/180, omega_naught])
+intervals = 50
+t = math.linspace(0, 5, intervals)
+y_naught = math.array([theta_naught * math.pi / 180, omega_naught])
 
 # create vector array y with theta and omega for at any time
 solution = odeint(derivative, y_naught, t, args=(l, m))
@@ -38,14 +40,25 @@ for i in range(intervals):
     x.append(l * math.sin(solution[i][0]))
     y.append(-l * math.cos(solution[i][0]))
 
-ax = plt.figure().add_subplot(projection='3d')
-plt.plot(x, y, t)
-ax.set_xlabel('X')
-ax.set_ylabel('Y')
-ax.set_zlabel('Time')
-plt.xticks(range(-2, 3))
-plt.yticks(range(-2, 3))
-plt.title("Pendulum Position as a Parametric Equation of Time")
-plt.show(block=True)
-plt.interactive(False)
-plt.show
+# function creates frames at each portion of time
+def create_frame(r):
+    plt.plot(x[r], y[r], marker="o", markersize=7, markeredgecolor="red", markerfacecolor="black")
+    plt.xlim([-2, 2])
+    plt.xlabel('x')
+    plt.ylim([-2, 2])
+    plt.ylabel('y')
+    plt.title(f'Pendulum position at {r}')
+    plt.savefig(f'img_{r}.png')
+    plt.close()
+
+#calls function for frames
+for r in range(intervals):
+    create_frame(r)
+frames = []
+#appends all frames into an array and uses imageio to make it into a gif
+for r in range(intervals):
+    image = imageio.v2.imread(f'img_{r}.png')
+    frames.append(image)
+#resultant gif is saved
+imageio.mimsave('./example.gif', frames, fps=15)
+
