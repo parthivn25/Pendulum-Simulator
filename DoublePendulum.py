@@ -2,7 +2,8 @@ import numpy as math
 import imageio
 from scipy.integrate import odeint
 import matplotlib.pyplot as plt
-import os
+from PIL import Image
+
 
 # work in standard units of meters, seconds, and radians
 
@@ -29,7 +30,7 @@ def derivative(y, t, l, m):
 
 
 # give initial conditions for pendulum, theta given in degrees
-theta1_naught, omega1_naught, theta2_naught, omega2_naught = 105, 0, 90, 0
+theta1_naught, omega1_naught, theta2_naught, omega2_naught = 45, 0, 60, 8
 
 # create an array of times for the process, followed by initial conditions
 seconds = 20
@@ -83,3 +84,5 @@ for r in range(intervals):
 # resultant gif is saved
 
 imageio.mimsave('./example.gif', frames, fps=15)
+a = Image.open("./example.gif")
+a.show()

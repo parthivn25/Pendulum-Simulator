@@ -2,7 +2,8 @@ import numpy as math
 import imageio
 from scipy.integrate import odeint
 import matplotlib.pyplot as plt
-import os
+from PIL import Image
+
 
 # work in standard units of meters, seconds, and radians
 
@@ -71,4 +72,6 @@ for r in range(intervals):
 # resultant gif is saved
 
 imageio.mimsave('./example.gif', frames, fps=15)
+a = Image.open("./example.gif")
+a.show()
 
