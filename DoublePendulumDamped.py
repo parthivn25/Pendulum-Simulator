@@ -16,45 +16,57 @@ g = 9.81
 # Solving Euler-Lagrange, we get ml^2alpha = mglsin(theta), or alpha = gsin(theta)/l
 
 def derivative(y, t, l, m):
-    theta, omega = y
+    theta1, omega1, theta2, omega2 = y
     # insert derivative as defined by Euler-Lagrange
-    dydt = [omega, - 0.5 * omega - (g / l) * math.sin(theta)]
+    cosdif = math.cos(theta1 - theta2)
+    sindif = math.sin(theta1 - theta2)
+    alpha1 = (g * math.sin(theta2) * cosdif - sindif * (omega1 ** 2 * cosdif + omega2 ** 2) - (2) * g * math.sin(
+        theta1)) / (1 + sindif ** 2)
+    alpha2 = ((2) * (omega1 ** 2 * sindif - g * math.sin(theta2) + g * math.sin(
+        theta1) * cosdif) + omega2 ** 2 * sindif * cosdif) / (1 + sindif ** 2)
+    dydt = [omega1, alpha1 - 0.5 * omega1, omega2, alpha2 - 0.5 * omega2]
     return dydt
 
 
 # give initial conditions for pendulum, theta given in degrees
-theta_naught, omega_naught = 179, 10
+theta1_naught, omega1_naught, theta2_naught, omega2_naught = 105, 0, 90, 0
 
 # create an array of times for the process, followed by initial conditions
-seconds = 10
-intervals = seconds * 10
+seconds = 20
+intervals = seconds*10
 
 t = math.linspace(0, seconds, intervals)
-y_naught = math.array([theta_naught * math.pi / 180, omega_naught])
+y_naught = math.array([theta1_naught * math.pi / 180, omega1_naught, theta2_naught * math.pi / 180, omega2_naught])
 
 # create vector array y with theta and omega for at any time
 solution = odeint(derivative, y_naught, t, args=(l, m))
-x = []
-y = []
+x1 = []
+y1 = []
+x2 = []
+y2 = []
 
 # change to cartesian coordinates
 for i in range(intervals):
-    x.append(l * math.sin(solution[i][0]))
-    y.append(-l * math.cos(solution[i][0]))
+    x1.append(l * math.sin(solution[i][0]))
+    y1.append(-l * math.cos(solution[i][0]))
+    x2.append(l * math.sin(solution[i][0]) + l * math.sin(solution[i][2]))
+    y2.append(-l * math.cos(solution[i][0]) - l * math.cos(solution[i][2]))
 
 
 # function creates frames at each portion of time
 def create_frame(r):
     # plot the pendulum and the bar connecting to the origin
-    plt.plot(x[r], y[r], marker="o", markersize=7, markeredgecolor="red", markerfacecolor="black")
-    plt.plot([x[r], 0], [y[r], 0], 'k-')
+    plt.plot(x1[r], y1[r], marker="o", markersize=7, markeredgecolor="red", markerfacecolor="black")
+    plt.plot([x1[r], 0], [y1[r], 0], 'k-')
+    plt.plot(x2[r], y2[r], marker="o", markersize=7, markeredgecolor="red", markerfacecolor="black")
+    plt.plot([x2[r], x1[r]], [y2[r], y1[r]], 'k-')
     # add axis preferences and titles to graph
-    plt.xlim([-1.5, 1.5])
-    plt.ylim([-1.5, 1.5])
+    plt.xlim([-2.5, 2.5])
+    plt.ylim([-2.5, 2.5])
     plt.xticks([])
     plt.yticks([])
     seconddisplay = (r / intervals) * seconds
-    seconddisplay= round(seconddisplay, 2)
+    seconddisplay = round(seconddisplay, 2)
     plt.title(f'Pendulum position at {seconddisplay} seconds')
     plt.savefig(f'img_{r}.png')
     plt.close()
@@ -71,4 +83,3 @@ for r in range(intervals):
 # resultant gif is saved
 
 imageio.mimsave('./example.gif', frames, fps=15)
-

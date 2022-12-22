@@ -26,8 +26,10 @@ def derivative(y, t, l, m):
 theta_naught, omega_naught = 179, 10
 
 # create an array of times for the process, followed by initial conditions
-intervals = 100
+
 seconds = 10
+intervals = seconds * 10
+
 t = math.linspace(0, seconds, intervals)
 y_naught = math.array([theta_naught * math.pi / 180, omega_naught])
 
