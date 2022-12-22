@@ -13,8 +13,7 @@ g = 9.81
 
 
 # initialize length and mass of pendulum
-# Lagrangian is given as T-V = 1/2m(l^2)(omega)^2 - mglcos(theta)
-# Solving Euler-Lagrange, we get ml^2alpha = mglsin(theta), or alpha = gsin(theta)/l
+# input solutions for the lagrangian
 
 def derivative(y, t, l, m):
     theta1, omega1, theta2, omega2 = y
